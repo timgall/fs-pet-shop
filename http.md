@@ -10,15 +10,14 @@ The HTTP requests will be commands in the form of create, read, update, and dest
 
 Change into the project directory.
 
-```shell
-$ cd path/to/project
-```
+````shell
+$ cd path/to/project```
 
 Create an `httpServer.js` file for your HTTP server code.
 
 ```shell
 $ touch httpServer.js
-```
+````
 
 ## Assignment
 

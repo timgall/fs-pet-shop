@@ -5,16 +5,24 @@ const subcommand = process.argv[2];
 //read the pets.json
 if (subcommand === "read") {
   // console.log(subcommand);
-  const petIndex = process.argv[3];
+  const petIndexStr = process.argv[3];
+  const petIndex = Number(petIndexStr);
   fs.readFile("pets.json", "utf8", (error, string) => {
     if (error) {
-      throw error;
-      //if it fails, throw the error
+      throw error; //if it fails, throw the error
     }
     const pets = JSON.parse(string);
-    if (petIndex === undefined) {
-      //log it to the console
+    //Read all
+    if (petIndexStr === undefined) {
       console.log(pets);
+    } else if (
+      petIndex >= pets.length ||
+      petIndex < 0 ||
+      Number.isNaN(petIndex)
+    ) {
+      console.error("Usage: node pets.js read INDEX");
+      process.exit(1); //log it to the console
+      //read single
     } else {
       console.log(pets[petIndex]);
     }
@@ -24,6 +32,7 @@ if (subcommand === "read") {
   const age = parseInt(process.argv[3]); //set variable for each pet, index parseInt since its a number not string
   const kind = process.argv[4]; //these are the input items from the terminal and will be tied into the .js file on line 37/38
   const name = process.argv[5];
+  const newPet = { age, kind, name }; //then we create a variable which allows us to hold data to be pushed up
 
   if (age === undefined || kind === undefined || name === undefined) {
     console.error("Usage: node pets.js create age kind name error"); //makes sure they input data
@@ -36,7 +45,6 @@ if (subcommand === "read") {
         throw error;
       }
       const pets = JSON.parse(string); //we now need to parse the string so that we can add data to it
-      const newPet = { age, kind, name }; //then we create a variable which allows us to hold data to be pushed up
       pets.push(newPet); //now we push it up
       fs.writeFile("pets.json", JSON.stringify(pets), (error) => {
         //now we need to return it back to normal and not parsed.
