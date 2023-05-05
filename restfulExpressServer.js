@@ -19,13 +19,21 @@ server.post("/pets", (req, res) => {
   const pet = { age, name, kind };
   if (!kind || !age || !name) {
     res.sendStatus(422);
-
     console.log(`422 error`);
     return;
   }
-  fs.readFile("pets.json", "UTF-8").then((data) => {
-    res.status(201).send(pet);
-  });
+  fs.readFile("pets.json", "utf-8")
+    .then((petList) => {
+      const pets = JSON.parse(petList);
+      pets.push(pet);
+      return pets;
+    })
+    .then((pets) => {
+      fs.writeFile("pets.json", JSON.stringify(pets)).then(() => {
+        console.log(`${name} ${kind} added to the pets.`);
+        res.send(pets);
+      });
+    });
 });
 //this allows for posts on pets
 server.get("/pets/:petIndex", (req, res) => {
@@ -62,12 +70,23 @@ server.patch("/pets/:petIndex", (req, res) => {
 /*req/res that allows us to patch at an index
 NOTE: The PATCH route handler must only update the record if age is an integer, 
 if kind is not missing, or if name is not missing.*/
-
-//req/res that allows us to verify the patch occured at an index with get
-
+server.delete("/pets/:petIndex", (req, res) => {
+  const petIndex = req.params.petIndex;
+  fs.readFile("pets.json", "utf-8").then((data) => {
+    const pets = JSON.parse(data);
+    if (petIndex < 0 || petIndex >= pets.length) {
+      return res.status(400).send("Invalid pet index");
+    }
+    const deletedPet = pets.splice(petIndex, 1)[0];
+    fs.writeFile("pets.json", JSON.stringify(pets), "utf-8", (err) => {
+      if (err) {
+        return res.status(500).send("Error writing to pets.json");
+      }
+    });
+    res.send(deletedPet);
+  });
+});
 //req/res that allows us to delete at an index
-
-//reeq/res taht allows us to get pets at an index in plain text that results in a 404 not found
 
 server.use((req, res, next) => {
   console.log("ERROR 404");

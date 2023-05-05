@@ -1,0 +1,8 @@
+DROP TABLE IF EXISTS
+
+CREATE TABLE{
+    id SERIAL PRIMARY KEY,
+    name TEXT,
+    age INT,
+    kind TEXT
+}
