@@ -1,8 +1,9 @@
-DROP TABLE IF EXISTS
+DROP TABLE IF EXISTS pets;
 
-CREATE TABLE{
+CREATE TABLE pets(
     id SERIAL PRIMARY KEY,
     name TEXT,
-    age INT,
+    age INTEGER,
     kind TEXT
-}
+);
+
