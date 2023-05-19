@@ -60,16 +60,22 @@ server.delete("/pets/:id", (req, res) => {
 });
 
 server.patch("/pets/:id", (req, res) => {
-  const { name, age, kind } = req.body;
   const id = Number(req.params.id);
+  const { name, age, kind } = req.body;
+
   if (Number.isNaN(id)) {
     res.sendStatus(422);
     return;
   }
 
   db.query(
-    "UPDATE pets SET name = COALESCE ($1, name), age =COALESCE($2, age), kind = COALESCE($3, kind) WHERE id = $4 RETURNING *",
-    [name, age, kind, id]
+    `
+    UPDATE pets 
+    SET name = COALESCE ($1, name), 
+    age =COALESCE($2, age), 
+    kind = COALESCE($3, kind) 
+    WHERE id = $4 RETURNING *",
+    [name, age, kind, id]`
   ).then((result) => {
     if (result.rows.length === 0) {
       res.sendStatus(404);
